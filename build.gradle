@@ -1,11 +1,16 @@
 plugins {
     id 'fabric-loom' version '1.14.10'
     id 'maven-publish'
+    id 'base'
 }
 
 version = project.mod_version
 group = project.maven_group
-archivesBaseName = project.archives_base_name
+
+// Proper way in Gradle 9+
+base {
+    archivesName = project.archives_base_name
+}
 
 repositories {
     // Loom automatically adds Minecraft and Fabric repos
@@ -46,17 +51,17 @@ processResources {
 }
 
 jar {
+    archiveBaseName.set(project.archives_base_name)
     from("LICENSE") {
-        rename { "${it}_${archivesBaseName}" }
+        rename { "${it}_${project.archives_base_name}" }
     }
-    archiveBaseName.set(archivesBaseName)
 }
 
 // Maven publishing
 publishing {
     publications {
         create("mavenJava", MavenPublication) {
-            artifactId = archivesBaseName
+            artifactId = project.archives_base_name
             from components.java
         }
     }
