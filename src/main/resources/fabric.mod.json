@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "enzomodkit",
+  "version": "${version}",
+  "name": "Enzo Mod Kit",
+  "description": "Client-side inventory kit saver",
+  "authors": ["Enzo"],
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.enzo.enzomodkit.EnzoModKit"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "fabric-api": "*",
+    "minecraft": "1.21.x"
+  }
+}
