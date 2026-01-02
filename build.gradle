@@ -1,68 +1,48 @@
 plugins {
-    id 'fabric-loom' version '1.14.10'
+    id 'fabric-loom' version "${loom_version}"
     id 'maven-publish'
-    id 'base'
 }
 
-version = project.mod_version
-group = project.maven_group
+version = mod_version
+group = maven_group
 
-// Proper way in Gradle 9+
 base {
-    archivesName = project.archives_base_name
+    archivesName = archives_base_name
 }
 
 repositories {
-    // Loom automatically adds Minecraft and Fabric repos
+    // Fabric & Minecraft repos are added automatically by Loom
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-}
+    modImplementation "net.fabricmc:fabric-loader:${loader_version}"
 
-loom {
-    splitEnvironmentSourceSets()
-    mods {
-        "enzomodkit" {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.client
-        }
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    it.options.release = 21
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-    withSourcesJar()
+    // Fabric API (required for client commands)
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version", version
+
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        expand version: version
     }
+}
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
 }
 
 jar {
-    archiveBaseName.set(project.archives_base_name)
     from("LICENSE") {
-        rename { "${it}_${project.archives_base_name}" }
-    }
-}
-
-// Maven publishing
-publishing {
-    publications {
-        create("mavenJava", MavenPublication) {
-            artifactId = project.archives_base_name
-            from components.java
-        }
+        rename { "${it}_${archives_base_name}" }
     }
 }
